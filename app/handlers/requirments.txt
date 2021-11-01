@@ -1,0 +1,3 @@
+pyserial
+mh-z19
+greengrasssdk
