@@ -5,7 +5,5 @@ RUN apt update \
     npm \
     && apt clean
 
-RUN npm install -g aws-cdk \
-    && pip3 install --upgrade aws-cdk.core
-
-RUN pip3 install awscli --upgrade
+RUN pip3 install awscli --upgrade \
+    && npm install -g aws-cdk \
