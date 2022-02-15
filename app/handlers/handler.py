@@ -30,7 +30,6 @@ while True:
     payload = create_payload(metric["co2"])
     publish_message(payload)
 
-    # TODO Want to get interval from iot cloud paramter.
     time.sleep(600)
 
 def handler(event, context):

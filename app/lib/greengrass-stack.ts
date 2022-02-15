@@ -2,6 +2,7 @@ import cdk = require('@aws-cdk/core');
 import iot = require('@aws-cdk/aws-iot');
 import lambda = require('@aws-cdk/aws-lambda');
 import greengrass = require('@aws-cdk/aws-greengrass');
+import iam = require('@aws-cdk/aws-iam');
 
 interface GreengrassstackProps extends cdk.StackProps {
     greengrassLambdaAlias: lambda.Alias
@@ -16,7 +17,6 @@ export class GreengrassStack extends cdk.Stack {
         const certArn = this.node.tryGetContext('greengrassCoreCertArn');
         const region: string = cdk.Stack.of(this).region;
         const accountId: string = cdk.Stack.of(this).account;
-        const snsConnectorTopicArn = this.node.tryGetContext('snsConnectorTopicArn')
 
         // AWS IoTのモノの作成
         const iotThing = new iot.CfnThing(this, 'Thing', {
@@ -63,6 +63,41 @@ export class GreengrassStack extends cdk.Stack {
                 principal: certArn
             });
             thingPrincipalAttachment.addDependsOn(iotThing)
+
+            const iotPutCloudWatchMetricsRole = new iam.Role(this, 'IotPutCloudWatchMetricsRole', {
+                assumedBy: new iam.ServicePrincipal('iot.amazonaws.com'),
+                path: '/'
+            });
+
+            iotPutCloudWatchMetricsRole.addToPolicy(
+                new iam.PolicyStatement({
+                    actions: ['cloudwatch:PutMetricData'],
+                    resources: [
+                        '*'
+                    ]
+                })
+            )
+
+            const iotTopicRule = new iot.CfnTopicRule(this, 'IotTopicRule', {
+                ruleName: 'CO2MetricsRule',
+                topicRulePayload: {
+                    actions: [
+                        {
+                            cloudwatchMetric: {
+                                metricName: 'CO2',
+                                metricNamespace: 'IoT',
+                                metricUnit: 'None',
+                                metricValue: '${value}',
+                                roleArn: iotPutCloudWatchMetricsRole.roleArn,
+                                // metricTimestamp: 'metricTimestamp',
+                            }
+                        }
+                    ],
+                    awsIotSqlVersion: '2016-03-23',
+                    ruleDisabled: false,
+                    sql: "SELECT * FROM 'metrics/co2'"
+                }
+            })
 
             // Greengrass Coreの作成
             const coreDefinition = new greengrass.CfnCoreDefinition(this, 'CoreDefinition', {
