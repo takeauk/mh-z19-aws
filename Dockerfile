@@ -7,3 +7,4 @@ RUN apt update \
 
 RUN pip3 install awscli --upgrade \
     && npm install -g aws-cdk \
+    && npm install -g typescript

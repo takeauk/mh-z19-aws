@@ -12,10 +12,11 @@ export class GreengrassStack extends cdk.Stack {
         super(scope, id, props);
 
         const thingName = this.node.tryGetContext('greengrassCoreThingName')
-        const groupName = this.node.tryGetContext('grenngrassGroupName')
+        const groupName = this.node.tryGetContext('greengrassGroupName')
         const certArn = this.node.tryGetContext('greengrassCoreCertArn');
         const region: string = cdk.Stack.of(this).region;
         const accountId: string = cdk.Stack.of(this).account;
+        const snsConnectorTopicArn = this.node.tryGetContext('snsConnectorTopicArn')
 
         // AWS IoTのモノの作成
         const iotThing = new iot.CfnThing(this, 'Thing', {
@@ -83,6 +84,23 @@ export class GreengrassStack extends cdk.Stack {
                 name: 'Resource',
             });
 
+            const subscriptionDefinition = new greengrass.CfnSubscriptionDefinition(this, 'SubscriptionDefinition', {
+                name: 'metric_subscription'
+            });
+
+            const subscriptionDefinitionVersion = new greengrass.CfnSubscriptionDefinitionVersion(this, "SubscriptionDefinitionVersion", {
+                subscriptionDefinitionId: subscriptionDefinition.ref,
+                subscriptions: [
+                    {
+                        id: "1",
+                        source: props.greengrassLambdaAlias.functionArn,
+                        subject: 'metrics/co2',
+                        target: 'cloud'
+                    }
+                ]
+            });
+
+            // シリアルデータの読み込み、書き込み先のリソースを定義
             const resourceDefinitionVersion = new greengrass.CfnResourceDefinitionVersion(this, 'ResourceDefinitionVersion', {
                 resourceDefinitionId: resourceDefinition.attrId,
                 resources: [
@@ -135,6 +153,7 @@ export class GreengrassStack extends cdk.Stack {
                 name: groupName,
                 initialVersion: {
                     coreDefinitionVersionArn: coreDefinition.attrLatestVersionArn,
+                    subscriptionDefinitionVersionArn: subscriptionDefinitionVersion.ref,
                     resourceDefinitionVersionArn: resourceDefinitionVersion.ref,
                     functionDefinitionVersionArn: functionDefinition.attrLatestVersionArn
                 }
@@ -142,6 +161,7 @@ export class GreengrassStack extends cdk.Stack {
 
             // 一連のDefinitionの作成が終わったらグループを作成
             group.addDependsOn(coreDefinition)
+            group.addDependsOn(subscriptionDefinition)
             group.addDependsOn(resourceDefinition)
             group.addDependsOn(functionDefinition)
         }
