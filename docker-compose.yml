@@ -7,4 +7,6 @@ services:
     image: aws-cdk
     container_name: aws-cdk
     tty: true
-    env_file: aws.env
+    env_file:
+      - aws.env
+      - app/.env

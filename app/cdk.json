@@ -16,7 +16,6 @@
     "@aws-cdk/aws-lambda:recognizeVersionProps": true,
     "@aws-cdk/aws-cloudfront:defaultSecurityPolicyTLSv1.2_2021": true,
     "greengrassCoreThingName": "mh-z19",
-    "greengrassGroupName": "mh-z19",
-    "greengrassCoreCertArn": ""
+    "greengrassGroupName": "mh-z19"
   }
 }

@@ -5,7 +5,8 @@ import greengrass = require('@aws-cdk/aws-greengrass');
 import iam = require('@aws-cdk/aws-iam');
 
 interface GreengrassstackProps extends cdk.StackProps {
-    greengrassLambdaAlias: lambda.Alias
+    greengrassLambdaAlias: lambda.Alias,
+    greengrassCoreCertArn: string
 }
 
 export class GreengrassStack extends cdk.Stack {
@@ -14,7 +15,7 @@ export class GreengrassStack extends cdk.Stack {
 
         const thingName = this.node.tryGetContext('greengrassCoreThingName')
         const groupName = this.node.tryGetContext('greengrassGroupName')
-        const certArn = this.node.tryGetContext('greengrassCoreCertArn');
+        const certArn = props.greengrassCoreCertArn;
         const region: string = cdk.Stack.of(this).region;
         const accountId: string = cdk.Stack.of(this).account;
 

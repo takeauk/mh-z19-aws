@@ -8,5 +8,6 @@ const app = new cdk.App();
 
 const lambdaStack = new GreengrassLambdaStack(app, 'GreengrassLambdaStack');
 new GreengrassStack(app, 'GreengrassStack', {
-  greengrassLambdaAlias: lambdaStack.greengrassLambdaAlias
+  greengrassLambdaAlias: lambdaStack.greengrassLambdaAlias,
+  greengrassCoreCertArn: process.env.GREENGRASS_CORE_CERT_ARN!
 });
