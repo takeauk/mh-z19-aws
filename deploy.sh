@@ -2,6 +2,8 @@
 
 npm run build
 
+cdk bootstrap
+
 GG_NAME=mh-z19
 GG_ID=$(aws greengrass list-groups --query "Groups[?Name==\`${GG_NAME}\`].Id" --output text)
 
