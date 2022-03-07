@@ -5,8 +5,12 @@ services:
       context: ./
       dockerfile: Dockerfile
     image: aws-cdk
+    volumes:
+      - ./.aws/:/root/.aws/
+      - .:/workspace
+      - /workspace/node_modules
+      - /workspace/handlers/packages
     container_name: aws-cdk
     tty: true
     env_file:
-      - aws.env
-      - app/.env
+      - .env
