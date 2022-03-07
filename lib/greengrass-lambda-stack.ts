@@ -12,7 +12,7 @@ export class GreengrassLambdaStack extends cdk.Stack {
         const greengrassLambda = new lambda.Function(this, 'CO2MetricHandler', {
             runtime: lambda.Runtime.PYTHON_3_7,
             code: lambda.Code.asset('handlers'),
-            handler: 'handler.handler',
+            handler: 'CO2MetricHandler.CO2MetricHandler',
         });
         const version = greengrassLambda.addVersion('1');
 

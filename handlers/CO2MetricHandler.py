@@ -32,5 +32,5 @@ while True:
 
     time.sleep(600)
 
-def handler(event, context):
+def CO2MetricHandler(event, context):
   return
