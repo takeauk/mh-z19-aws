@@ -11,10 +11,10 @@ export class GreengrassLambdaStack extends cdk.Stack {
         // GreengrassにデプロイするLambda関数の作成
         const greengrassLambda = new lambda.Function(this, 'CO2MetricHandler', {
             runtime: lambda.Runtime.PYTHON_3_7,
-            code: lambda.Code.asset('handlers'),
+            code: lambda.Code.fromAsset('handlers'),
             handler: 'CO2MetricHandler.CO2MetricHandler',
         });
-        const version = greengrassLambda.addVersion('1');
+        const version = greengrassLambda.currentVersion;
 
         // Greengrass Lambdaとして使用する場合、エイリアスを指定する必要がある
         this.greengrassLambdaAlias = new lambda.Alias(this, 'CO2MetricHandlerAlias', {
