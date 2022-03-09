@@ -1,10 +1,10 @@
 import sys
-sys.path.append("packages/") # 追加パッケージのインストール先
+sys.path.append("packages")
 import logging
 import time
 import json
-import mh_z19
 import greengrasssdk
+import mh_z19
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
