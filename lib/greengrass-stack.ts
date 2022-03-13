@@ -145,7 +145,7 @@ export class GreengrassStack extends cdk.Stack {
                         name: 'serial_resource',
                         resourceDataContainer: {
                             localDeviceResourceData: {
-                                sourcePath: '/dev/ttyAMA0',
+                                sourcePath: '/dev/serial0',
                                 groupOwnerSetting: {
                                     autoAddGroupOwner: false,
                                     groupOwner: 'dialout'

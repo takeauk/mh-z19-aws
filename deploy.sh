@@ -1,9 +1,5 @@
 # !/bin/sh -eu
 
-npm run build
-
-cdk bootstrap
-
 GG_NAME=mh-z19
 GG_ID=$(aws greengrass list-groups --query "Groups[?Name==\`${GG_NAME}\`].Id" --output text)
 
@@ -11,6 +7,8 @@ if [ -n "$GG_ID" ]; then
     yes | aws greengrass reset-deployments --group-id ${GG_ID} --force
     yes | cdk destroy --all
 fi
+
+cdk bootstrap
 
 yes | cdk deploy GreengrassStack
 
